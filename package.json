@@ -1,0 +1,27 @@
+{
+  "name": "tg-yoga",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "node-telegram-bot-api": "^0.30.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": ".."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safonovilya/tg_bot_test.git"
+  },
+  "keywords": [
+    "tg"
+  ],
+  "author": "Ilya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/safonovilya/tg_bot_test/issues"
+  },
+  "homepage": "https://github.com/safonovilya/tg_bot_test#readme"
+}
