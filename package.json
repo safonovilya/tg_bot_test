@@ -4,12 +4,11 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
-    "node-telegram-bot-api": "^0.30.0"
+    "telebot": "^1.2.6"
   },
   "devDependencies": {},
   "scripts": {
-    "start":"node bot.js",
+    "start": "node bot.js",
     "test": ".."
   },
   "repository": {
