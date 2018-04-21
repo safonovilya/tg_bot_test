@@ -2,6 +2,28 @@ const TOKEN = process.env.TELEGRAM_TOKEN;
 const TeleBot = require('telebot');
 const bot = new TeleBot(TOKEN);
 const util = require('./util.js');
+const PORT = process.env.PORT;
+/*
+var https = require('https');
+
+var fs = require('fs');
+var options = {
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem')
+};
+
+https.createServer(options, function (req, res) {
+  res.end('secure!');
+}).listen(443);
+*/
+
+// Redirect from http port 80 to https
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(301, { "Location": "http://t.me/IlyaSaf_test_bot" });
+  res.end();
+}).listen(PORT);
+
 
 async function getAvailableDates() {
   // TODO
