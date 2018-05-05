@@ -1,5 +1,4 @@
 const request = require('request');
-const bot = require('./index').bot
 let list;
 
 async function getInfo(url) {
@@ -18,7 +17,7 @@ async function getInfo(url) {
 async function getAvailableDates() {
   // TODO
   // url+'&time_start=yyyy-mm-dd&time_end=yyyy-mm-dd'
-  return getInfo(process.env.URL)
+  return getInfo(process.env.API_URL)
 }
 
 module.exports = {

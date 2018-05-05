@@ -4,6 +4,7 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
+    "mongoose": "^5.0.16",
     "telebot": "^1.2.6"
   },
   "devDependencies": {},
