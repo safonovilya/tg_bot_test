@@ -17,7 +17,7 @@ class Talk {
     }
     replyMarkup = this.buildMarkup();
 
-    return bot.sendMessage(msg.from.id, 'Выбрать', {replyMarkup});
+    return bot.sendMessage(msg.from.id, this.active.text, {replyMarkup});
   }
 
   nextQuestion() {
