@@ -1,5 +1,7 @@
 const request = require('request');
+const moment = require('moment');
 let list;
+const periodInDays = 7;
 
 async function getInfo(url) {
   return new Promise(function (resolve, reject) {
@@ -15,9 +17,10 @@ async function getInfo(url) {
 
 
 async function getAvailableDates() {
-  // TODO
-  // url+'&time_start=yyyy-mm-dd&time_end=yyyy-mm-dd'
-  return getInfo(process.env.API_URL)
+  const today = moment();
+  const endOfPeriod = moment().add(periodInDays, 'days');
+  console.log(`${process.env.API_URL}&time_start=${today.format('YYYY-MM-DD')}&time_end=${endOfPeriod.format('YYYY-MM-DD')}`)
+  return getInfo(`${process.env.API_URL}&time_start=${today.format('YYYY-MM-DD')}&time_end=${endOfPeriod.format('YYYY-MM-DD')}`)
 }
 
 module.exports = {

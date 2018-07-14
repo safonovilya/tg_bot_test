@@ -27,7 +27,9 @@ bot.on('callbackQuery', msg => {
   // bot.deleteMessage(msg.message.chat.id, msg.message.from.id)
 
   let talk = getTalk(msg.from.id);
+
   if (talk) {
+    console.log("Talk found");
     talk.setAnswer(msg);
     talk.reply(msg);
   }

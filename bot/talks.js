@@ -1,21 +1,29 @@
 const {bot} = require('./index');
 
 //TODO: expire state
+
 class Talk {
 
   constructor(questions, options = {}) {
     this.questions = questions;
+    this.resolvedQuestions = [];
     this.active = this.questions && this.questions.length ? this.questions[0] : null;
-    this.onEnd = options.callback || function (msg){ bot.sendMessage(msg.from.id, 'It was nice talking with you!'); }
+    this.onEnd = options.callback || ((msg) => {
+      const result = this.resolvedQuestions.map(q =>  q.answer).join(' ');
+      bot.sendMessage(msg.from.id, `Вы записались ${result}`);
+    })
   }
 
-  reply(msg) {
+  async reply(msg) {
     let replyMarkup;
     this.nextQuestion();
+
     if (!this.active){
       return this.endTalk(msg);
     }
-    replyMarkup = this.buildMarkup();
+
+    // TODO: support requesting contact question
+    replyMarkup = await this.buildMarkup();
 
     return bot.sendMessage(msg.from.id, this.active.text, {replyMarkup});
   }
@@ -27,11 +35,11 @@ class Talk {
     }
 
     // TODO: if active question have sub questions - show his leafs
-    // NOTE: to make `resolved questions` array to have ability re-answer
 
     if (this.active && this.active.isReady()) {
-      this.questions.splice(this.questions.indexOf(this.active), 1)
-      this.active = this.questions.shift();
+      const resolvedQuestion = this.questions.splice(this.questions.indexOf(this.active), 1);
+      this.resolvedQuestions.push(resolvedQuestion[0]);
+      this.active = this.questions.length ? this.questions[0] : null;
     }
 
   }
@@ -41,11 +49,21 @@ class Talk {
     this.onEnd(msg)
   }
 
-  buildMarkup() {
+  async buildMarkup() {
     let replyMarkup;
     let {type} = this.active;
     if (type === 'inlineKeyboard') {
-      replyMarkup = bot.inlineKeyboard([this.active.answers.map(buildButton)]);
+      let answers = [];
+
+      if (this.active.filter !== undefined && typeof this.active.filter === 'function') {
+        answers = await this.active.filter(this.resolvedQuestions).catch(e => {
+          console.log(e)
+          return [];
+        })
+      } else {
+         answers = await this.active.answers;
+      }
+      replyMarkup = bot.inlineKeyboard(listToMatrix(answers.map(buildButton), 3));
     }
     return replyMarkup
   }
@@ -72,6 +90,7 @@ class Question {
     this.type = optoins.type;
     this.answer = null;
     this.answers = optoins.answers;
+    this.filter = optoins.filterAnswers;
     this.singleUse = false;
     this.ready = false
   }
@@ -97,3 +116,19 @@ function buildButton(answer) {
 module.exports = {
   Talk, Question
 };
+
+
+function listToMatrix(list, elementsPerSubArray) {
+  let matrix = [], i, k;
+
+  for (i = 0, k = -1; i < list.length; i++) {
+    if (i % elementsPerSubArray === 0) {
+      k++;
+      matrix[k] = [];
+    }
+
+    matrix[k].push(list[i]);
+  }
+
+  return matrix;
+}
