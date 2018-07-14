@@ -1,5 +1,5 @@
 const {bot} = require('../index');
-const Message = require('mongoose').model('Message');
+// const Message = require('mongoose').model('Message');
 const moment = require('moment-timezone');
 const log = console.log;
 const { Talk, Question } = require('../talks');
