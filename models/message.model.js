@@ -9,6 +9,7 @@ const messageSchema = new mongoose.Schema({
     id: String,
     text: String
   },
+  msg: mongoose.Schema.Types.Mixed,
   timestamp: Number
 });
 

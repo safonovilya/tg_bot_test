@@ -19,7 +19,6 @@ async function getInfo(url) {
 async function getAvailableDates() {
   const today = moment();
   const endOfPeriod = moment().add(periodInDays, 'days');
-  console.log(`${process.env.API_URL}&time_start=${today.format('YYYY-MM-DD')}&time_end=${endOfPeriod.format('YYYY-MM-DD')}`)
   return getInfo(`${process.env.API_URL}&time_start=${today.format('YYYY-MM-DD')}&time_end=${endOfPeriod.format('YYYY-MM-DD')}`)
 }
 

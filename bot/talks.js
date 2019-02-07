@@ -10,7 +10,7 @@ class Talk {
     this.active = this.questions && this.questions.length ? this.questions[0] : null;
     this.onEnd = options.callback || ((msg) => {
       const result = this.resolvedQuestions.map(q =>  q.answer).join(' ');
-      bot.sendMessage(msg.from.id, `Вы записались ${result}`);
+      bot.sendMessage(msg.from.id, `(Demo)Вы записались ${result}`);
     })
   }
 
@@ -33,8 +33,6 @@ class Talk {
     if (this.active && !this.active.isReady()) {
       return this.active;
     }
-
-    // TODO: if active question have sub questions - show his leafs
 
     if (this.active && this.active.isReady()) {
       const resolvedQuestion = this.questions.splice(this.questions.indexOf(this.active), 1);

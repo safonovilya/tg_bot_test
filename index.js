@@ -1,9 +1,13 @@
-// const db = require('./db');
+const db = require('./db');
 const server = require('./server');
 const {bot} = require('./bot/index');
 
 const utils = require('./bot/utils.js');
 const {getTalk} = require('./bot/manager');
+
+const Message = require('mongoose').model('Message');
+const moment = require('moment');
+moment.locale('ru');
 
 // MENU
 require('./bot/commands/start');
@@ -13,6 +17,10 @@ require('./bot/commands/utils');
 require('./bot/commands/schedule');
 
 bot.on('text', async (msg, props) => {
+
+  // console.log(msg, props);
+  const dbMsg = Message({msg});
+  dbMsg.save(console.log);
 
   let talk = getTalk(msg.from.id);
   if (talk) {

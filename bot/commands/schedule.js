@@ -46,9 +46,8 @@ async function getDateTimelist(resolvedQuestions) {
   const lesson = data.reduce((result, currentValue, currentIndex, array) => {
     const start = moment(+currentValue['date-start']*1000);
     const end = moment(+currentValue['date-end']*1000);
-    console.log(start, end)
     //.tz('Asia/Yekaterinburg')
-    const key = `${start.format('HH:mm')}-${end.format('HH:mm dd Z')}`;
+    const key = `${start.format('HH:mm')}-${end.format('HH:mm dd')}`;
     if (+currentValue.hcount > +currentValue.proved)
       result[key] = true;
     return result;
@@ -69,18 +68,14 @@ bot.on('/записаться', msg => {
   let talk = getTalk(msg.from.id);
   if (!talk) {
     talk = new Talk([
-      // new Question('Studio',{
-      //   type: 'inlineKeyboard',
-      //   answers: getStudioList()
-      // }),
-      /*new Question('Выберете тренера',{
+      new Question('Выберете тренера',{
         type: 'inlineKeyboard',
         answers: getTrenerlist()
       }),
       new Question('Выберете занятие',{
         type: 'inlineKeyboard',
         answers: getLessonlist()
-      }),*/
+      }),
       new Question('Выберете время',{
         type: 'inlineKeyboard',
         filterAnswers: getDateTimelist
@@ -101,7 +96,7 @@ function confirm(){
 // Inline buttons
 bot.on('/список', async msg => {
 
-  let keyArray = await showAvailableDays();
+  let keyArray = await showAvailableDays(msg);
   let replyMarkup = bot.inlineKeyboard(keyArray);
   return bot.sendMessage(msg.from.id, 'Вибири занятие', {replyMarkup});
 
