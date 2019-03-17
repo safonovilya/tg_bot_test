@@ -1,5 +1,5 @@
 const {bot} = require('./index');
-
+const ADMIN_ID = process.env.ADMIN_ID;
 //TODO: expire state
 
 class Talk {
@@ -11,6 +11,7 @@ class Talk {
     this.onEnd = options.callback || ((msg) => {
       const result = this.resolvedQuestions.map(q =>  q.answer).join(' ');
       bot.sendMessage(msg.from.id, `(Demo)Вы записались ${result}`);
+      bot.sendMessage(ADMIN_ID, `Новая запись ${msg.from.last_name} ${msg.from.first_name} ${result}`);
     })
   }
 
@@ -85,6 +86,7 @@ class Talk {
 class Question {
   constructor(text, optoins) {
     this.text = text;
+    this.key = optoins.key;
     this.type = optoins.type;
     this.answer = null;
     this.answers = optoins.answers;

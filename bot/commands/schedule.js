@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const {bot} = require('../index');
 // const Message = require('mongoose').model('Message');
 const moment = require('moment-timezone');
@@ -16,8 +17,9 @@ function getStudioList(){
   return [{text:'bratiev', callback: 1}, {text: 'anoshkina', callback: 2}];
 }
 
-async function getLessonlist(){
-  const data = await getAvailableDates();
+async function getLessonlist(filters){
+  let data = await getAvailableDates();
+  data = _.filter(data, filters);
   const master = data.reduce((result, currentValue, currentIndex, array) => {
     if (+currentValue.hcount > +currentValue.proved)
       result[currentValue.title] = true;
@@ -37,12 +39,11 @@ async function getTrenerlist() {
   return Object.keys(master).map(arrayToKeaboardObj);
 }
 
-async function getDateTimelist(resolvedQuestions) {
+async function getDateTimelist(filters) {
 
-  // TODO: apply filters by resolved questions
-  console.log(resolvedQuestions)
+  let data = await getAvailableDates();
+  data = _.filter(data, filters);
 
-  const data = await getAvailableDates();
   const lesson = data.reduce((result, currentValue, currentIndex, array) => {
     const start = moment(+currentValue['date-start']*1000);
     const end = moment(+currentValue['date-end']*1000);
@@ -59,7 +60,6 @@ async function getDateTimelist(resolvedQuestions) {
 function showAvailableDays (msg) {
 
   const days = ['Понедельник', 'Вторник'];
-  // let keyArray = await getLessonListKB();
   let replyMarkup = bot.inlineKeyboard(days);
   return bot.sendMessage(msg.from.id, 'Вибирите день', {replyMarkup});
 }
@@ -70,15 +70,18 @@ bot.on('/записаться', msg => {
     talk = new Talk([
       new Question('Выберете тренера',{
         type: 'inlineKeyboard',
+        key: 'master',
         answers: getTrenerlist()
       }),
       new Question('Выберете занятие',{
         type: 'inlineKeyboard',
-        answers: getLessonlist()
+        key: 'title',
+        answers: getLessonlist(),
+        filterAnswers: passFiltersTo(getLessonlist)
       }),
       new Question('Выберете время',{
         type: 'inlineKeyboard',
-        filterAnswers: getDateTimelist
+        filterAnswers: passFiltersTo(getDateTimelist)
       })
     ]);
     registerTalk(msg.from.id, talk)
@@ -86,12 +89,21 @@ bot.on('/записаться', msg => {
   talk.reply(msg);
 });
 
+function passFiltersTo(getList) {
+  return (resolvedQuestions) => {
+    const filters = resolvedQuestions.reduce((acc, el)=> {
+      acc[el.key] = el.answer;
+      return acc;
+    },{});
+    return getList(filters);
+  }
+}
+
 function confirm(){
   let replyMarkup = bot.keyboard([
     [bot.button('contact', 'Подтвердить')]
   ], {resize: true, once: true});
 }
-
 
 // Inline buttons
 bot.on('/список', async msg => {
