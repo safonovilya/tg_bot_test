@@ -11,5 +11,5 @@ bot.on('/hide', msg => {
 bot.on(['location', 'contact'], (msg, self) => {
   const dbMsg = Message({msg});
   dbMsg.save(log);
-  return bot.sendMessage(msg.from.id, `Thank you for ${ self.type }.`);
+  return bot.sendMessage(msg.from.id, `Thank you for ${self.type}.`);
 });

@@ -1,9 +1,9 @@
 const db = require('./db');
 const server = require('./server');
-const {bot} = require('./bot/index');
+const { bot } = require('./bot/index');
 
 const utils = require('./bot/utils.js');
-const {getTalk} = require('./bot/manager');
+const { getTalk } = require('./bot/manager');
 
 const Message = require('mongoose').model('Message');
 const moment = require('moment');
@@ -17,16 +17,14 @@ require('./bot/commands/utils');
 require('./bot/commands/schedule');
 
 bot.on('text', async (msg, props) => {
-
   // console.log(msg, props);
-  const dbMsg = Message({msg});
+  const dbMsg = Message({ msg });
   dbMsg.save(console.log);
 
   let talk = getTalk(msg.from.id);
   if (talk) {
     return talk.reply(msg);
   }
-
 });
 
 // Inline button callback
@@ -37,11 +35,10 @@ bot.on('callbackQuery', msg => {
   let talk = getTalk(msg.from.id);
 
   if (talk) {
-    console.log("Talk found");
+    console.log('Talk found');
     talk.setAnswer(msg);
     talk.reply(msg);
   }
 });
-
 
 bot.start();

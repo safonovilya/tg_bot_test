@@ -9,12 +9,8 @@ const { getAvailableDates } = require('../utils');
 
 const routes = [];
 
-function arrayToKeaboardObj(el) {
+function arrayToKeyboardObj(el) {
   return {text: el, callback: el}
-}
-
-function getStudioList(){
-  return [{text:'bratiev', callback: 1}, {text: 'anoshkina', callback: 2}];
 }
 
 async function getLessonlist(filters){
@@ -25,7 +21,7 @@ async function getLessonlist(filters){
       result[currentValue.title] = true;
     return result;
   }, {});
-  return Object.keys(master).map(arrayToKeaboardObj);
+  return Object.keys(master).map(arrayToKeyboardObj);
 }
 
 async function getTrenerlist() {
@@ -36,7 +32,7 @@ async function getTrenerlist() {
       result[currentValue.master] = true;
     return result;
   }, {});
-  return Object.keys(master).map(arrayToKeaboardObj);
+  return Object.keys(master).map(arrayToKeyboardObj);
 }
 
 async function getDateTimelist(filters) {
@@ -53,7 +49,7 @@ async function getDateTimelist(filters) {
       result[key] = true;
     return result;
   }, {});
-  return Object.keys(lesson).map(arrayToKeaboardObj);
+  return Object.keys(lesson).map(arrayToKeyboardObj);
 }
 
 
