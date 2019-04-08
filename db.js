@@ -7,10 +7,11 @@ assert.notEqual(process.env.MONGODB_URL, undefined);
 
 const dbName = 'aeroyoga';
 
-mongoose.connect(process.env.MONGODB_URL);
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true });
 
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
-  console.log('we\'re connected!')
+  // eslint-disable-next-line no-console
+  console.log("we're connected!");
 });
