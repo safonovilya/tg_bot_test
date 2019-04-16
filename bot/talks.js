@@ -1,75 +1,88 @@
-const {bot} = require('./index');
-const ADMIN_ID = process.env.ADMIN_ID;
+const { bot } = require('./index');
+const { ADMIN_ID } = process.env;
 //TODO: expire state
 
 class Talk {
-
   constructor(questions, options = {}) {
     this.questions = questions;
     this.resolvedQuestions = [];
-    this.active = this.questions && this.questions.length ? this.questions[0] : null;
-    this.onEnd = options.callback || ((msg) => {
-      const result = this.resolvedQuestions.map(q =>  q.answer).join(' ');
-      bot.sendMessage(msg.from.id, `(Demo)Вы записались ${result}`);
-      bot.sendMessage(ADMIN_ID, `Новая запись ${msg.from.last_name} ${msg.from.first_name} ${result}`);
-    })
+    this.active =
+      this.questions && this.questions.length ? this.questions[0] : null;
+    this.onEnd =
+      options.callback ||
+      (msg => {
+        const result = this.resolvedQuestions.map(q => q.answer).join(' ');
+        bot.sendMessage(msg.from.id, `(Demo)Вы записались ${result}`);
+        bot.sendMessage(
+          ADMIN_ID,
+          `Новая запись ${msg.from.last_name} ${msg.from.first_name} ${result}`,
+        );
+      });
   }
 
   async reply(msg) {
     let replyMarkup;
     this.nextQuestion();
 
-    if (!this.active){
+    if (!this.active) {
       return this.endTalk(msg);
     }
 
     // TODO: support requesting contact question
     replyMarkup = await this.buildMarkup();
 
-    return bot.sendMessage(msg.from.id, this.active.text, {replyMarkup});
+    return bot.sendMessage(msg.from.id, this.active.text, {
+      replyMarkup,
+    });
   }
 
   nextQuestion() {
-
     if (this.active && !this.active.isReady()) {
       return this.active;
     }
 
     if (this.active && this.active.isReady()) {
-      const resolvedQuestion = this.questions.splice(this.questions.indexOf(this.active), 1);
+      const resolvedQuestion = this.questions.splice(
+        this.questions.indexOf(this.active),
+        1,
+      );
       this.resolvedQuestions.push(resolvedQuestion[0]);
       this.active = this.questions.length ? this.questions[0] : null;
     }
-
   }
-  endTalk(msg){
+  endTalk(msg) {
     //TODO: save talk to DB
     //TODO: notify admin
-    this.onEnd(msg)
+    this.onEnd(msg);
   }
 
   async buildMarkup() {
     let replyMarkup;
-    let {type} = this.active;
+    let { type } = this.active;
     if (type === 'inlineKeyboard') {
       let answers = [];
 
-      if (this.active.filter !== undefined && typeof this.active.filter === 'function') {
+      if (
+        this.active.filter !== undefined &&
+        typeof this.active.filter === 'function'
+      ) {
         answers = await this.active.filter(this.resolvedQuestions).catch(e => {
-          console.log(e)
+          //console.log(e);
           return [];
-        })
+        });
       } else {
-         answers = await this.active.answers;
+        answers = await this.active.answers;
       }
-      replyMarkup = bot.inlineKeyboard(listToMatrix(answers.map(buildButton), 3));
+      replyMarkup = bot.inlineKeyboard(
+        listToMatrix(answers.map(buildButton), 3),
+      );
     }
-    return replyMarkup
+    return replyMarkup;
   }
 
   setAnswer(msg) {
     //TODO assert
-    this.active.setAnswer(msg.data)
+    this.active.setAnswer(msg.data);
   }
 
   matchAnswer() {
@@ -92,11 +105,11 @@ class Question {
     this.answers = optoins.answers;
     this.filter = optoins.filterAnswers;
     this.singleUse = false;
-    this.ready = false
+    this.ready = false;
   }
 
   isReady() {
-    return this.ready
+    return this.ready;
   }
 
   setAnswer(answer) {
@@ -104,22 +117,24 @@ class Question {
     this.answer = answer;
     this.ready = true;
   }
-
 }
-
 
 function buildButton(answer) {
   //TODO: validate answer;
-  return bot.inlineButton(answer.text, {callback: answer.callback})
+  return bot.inlineButton(answer.text, {
+    callback: answer.callback,
+  });
 }
 
 module.exports = {
-  Talk, Question
+  Talk,
+  Question,
 };
 
-
 function listToMatrix(list, elementsPerSubArray) {
-  let matrix = [], i, k;
+  let matrix = [],
+    i,
+    k;
 
   for (i = 0, k = -1; i < list.length; i++) {
     if (i % elementsPerSubArray === 0) {

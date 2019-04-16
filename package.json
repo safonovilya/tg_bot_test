@@ -15,6 +15,7 @@
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "mocha": "^6.1.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "mongoose": "^5.0.16",
@@ -28,7 +29,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "..",
+    "test": "nodemon --exec 'mocha -R min ./**/*.test.js'",
     "build": "webpack",
     "watch": "webpack --watch",
     "clean": "rm -rf dist"

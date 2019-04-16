@@ -2,6 +2,7 @@ const assert = require('assert');
 const mongoose = require('mongoose');
 const Session = require('./models/session.model');
 const Message = require('./models/message.model');
+const Event = require('./models/event.model');
 
 assert.notEqual(process.env.MONGODB_URL, undefined);
 
